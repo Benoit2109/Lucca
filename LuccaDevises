@@ -1,0 +1,40 @@
+#!/usr/bin/env node
+const getAllExchangeRates = require("./getAllExchangeRate");
+const calcul = require("./calculNewAmount");
+
+let fs = require("fs");
+
+fs.readFile(process.argv[2], "utf-8", (error, data) => {
+  const fileToArray = data.split("\n");
+
+  const firstLine = fileToArray[0].split(";");
+  let l = parseInt(fileToArray[1]) + 2;
+
+  const formattedInput = {
+    startingCurrency: firstLine[0],
+    targetCurrency: firstLine[2],
+    amount: firstLine[1],
+    exchangeRates: fileToArray
+      .filter((el, i) => i > 1 && i < l)
+      .map((el, i) => {
+        const eachLine = el.split(";");
+        return {
+          from: eachLine[0],
+          to: eachLine[1],
+          rate: parseFloat(eachLine[2]),
+          round: 1,
+        };
+      }),
+  };
+  
+  let exchangeRates = getAllExchangeRates(formattedInput.exchangeRates);
+  
+  let result = calcul(
+    formattedInput.startingCurrency,
+    formattedInput.amount,
+    formattedInput.targetCurrency,
+    exchangeRates
+  );
+
+  console.log(result);
+});

@@ -61,3 +61,5 @@ test("get all exchanges rates", () => {
     { from: "INR", rate: 0.0184, round: 4, to: "USD" },
   ]);
 });
+
+
